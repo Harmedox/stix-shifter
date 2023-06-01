@@ -2016,7 +2016,7 @@
       "object": "observer"
     },
     "type": {
-      "key": "x-oca-asset.type",
+      "key": "x-oca-asset.host_type",
       "object": "observer"
     },
     "vendor": {
