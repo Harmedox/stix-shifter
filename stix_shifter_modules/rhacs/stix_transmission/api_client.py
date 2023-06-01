@@ -17,7 +17,6 @@ class APIClient:
                                     connection.get('port', None),
                                     headers,
                                     url_modifier_function=url_modifier_function,
-                                    sni=connection.get('sni', None),
                                     cert_verify=connection.get('selfSignedCert', True)
                                     )
         self.timeout = connection['options'].get('timeout')
@@ -27,7 +26,7 @@ class APIClient:
               Ping the Data Source
               :return: Response object
         """
-        return await self.client.call_api(self.PING_ENDPOINT, 'GET')
+        return await self.client.call_api(self.PING_ENDPOINT, 'GET', timeout=self.timeout)
 
     async def get_search_results(self, query):
         """
