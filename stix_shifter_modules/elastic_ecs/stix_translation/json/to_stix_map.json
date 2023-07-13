@@ -1213,11 +1213,11 @@
     "email": [
       {
         "key": "email-addr.value",
-        "object": "email"
+        "object": "user_email"
       },
       {
         "key": "email-addr.belongs_to_ref",
-        "object": "email",
+        "object": "user_email",
         "references": "user"
       }
     ],
@@ -1900,6 +1900,120 @@
           "object": "host"
         }
       }
+    }
+  },
+  "email": {
+    "content_type": {
+      "key": "email-message.content_type",
+      "object": "email"
+    },
+    "subject": {
+      "key": "email-message.subject",
+      "object": "email"
+    },
+    "from": {
+      "address": [
+        {
+          "key": "email-addr.value",
+          "object": "email_from"
+        },
+        {
+          "key": "email-message.from_ref",
+          "object": "email",
+          "references": "email_from"
+        }
+      ]
+    },
+    "to": {
+      "address": [
+        {
+          "key": "email-addr.value",
+          "object": "email_to",
+          "unwrap": true
+        },
+        {
+          "key": "email-message.to_refs",
+          "object": "email",
+          "references": ["email_to"],
+          "unwrap": true
+        }
+      ]
+    },
+    "cc": {
+      "address": [
+        {
+          "key": "email-addr.value",
+          "object": "email_cc",
+          "unwrap": true
+        },
+        {
+          "key": "email-message.cc_refs",
+          "object": "email",
+          "references": ["email_cc"],
+          "unwrap": true
+        }
+      ]
+    },
+    "bcc": {
+      "address": [
+        {
+          "key": "email-addr.value",
+          "object": "email_bcc",
+          "unwrap": true
+        },
+        {
+          "key": "email-message.bcc_refs",
+          "object": "email",
+          "references": ["email_bcc"],
+          "unwrap": true
+        }
+      ]
+    },
+    "origination_timestamp": {
+      "key": "email-message.date",
+      "object": "email"
+    },
+    "sender": {
+      "address": [
+        {
+          "key": "email-addr.value",
+          "object": "email_sender"
+        },
+        {
+          "key": "email-message.sender_ref",
+          "object": "email",
+          "references": "email_sender"
+        }
+      ]
+    },
+    "reply_to": {
+      "address": {
+        "key": "email-message.additional_header_fields.Reply-to",
+        "object": "email"
+      }
+    },
+    "delivery_timestamp": {
+      "key": "email-message.additional_header_fields.X-delivery-date",
+      "object": "email"
+    },
+    "local_id": {
+      "key": "email-message.additional_header_fields.X-local-id",
+      "object": "email"
+    },
+    "x_mailer": [
+      {
+        "key": "software.name",
+        "object": "email_mailer"
+      },
+      {
+        "key": "email-message.additional_header_fields.X-mailer",
+        "object": "email",
+        "references": "email_mailer"
+      }
+    ],
+    "message_id": {
+      "key": "email-message.message_id",
+      "object": "email"
     }
   },
   "http": {
