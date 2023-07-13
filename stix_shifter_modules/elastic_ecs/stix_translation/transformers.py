@@ -36,3 +36,17 @@ class PathToStixRegistryValue(ValueTransformer):
             return [{ 'name': value }]
         except ValueError:
             LOGGER.error("Cannot convert root key to Stix formatted windows registry key")
+    
+class SetEmailAttachmentBody(ValueTransformer):
+    """A value transformer to convert email attachment to email-message.body_multipart STIX and reference file STIX"""
+
+    @staticmethod
+    def transform(obj):
+        result = []
+        for item in obj:
+            val = {}
+            file_attachment = item["file"]
+            val["content_type"] = file_attachment["mime_type"]
+            val["content_disposition"] = "attachment; filename=\"{}\"".format(file_attachment["name"])
+            result.append(val)
+        return result
