@@ -7,7 +7,10 @@ The steps below assume you have renamed the `async_template` module directory to
 1. [Edit the from_stix_map.json file](#step-2-edit-the-from_stix_map-json-file)
 1. [Edit the operators.json file](#step-3-edit-the-operators-json-file)
 1. [Edit the query_constructor.py file](#step-4-edit-the-query-constructor-file)
-1. [Edit the to_stix_map.json file](#step-5-edit-the-to_stix_map-json-file)
+1. [Edit the to_stix_map.json file](#step-5-edit-the-to_stix_map-json-file) 
+  
+    Refer to the [keywords document](develop-mapping-keywords.md) when creating the to-STIX mappings.
+    
 1. [Add custom data transformers (optional)](#step-6-add-custom-data-transformers-(optional))
 1. [Verify that the translation module was created successfully](#step-7-verify-that-the-translation-module-was-created-successfully)
 
@@ -232,7 +235,7 @@ The example provided in the template connector is based on an SQL language. This
 
 ## Step 5. Edit the to_stix_map JSON file
 
-The `to_stix_map.json` file is where you define HOW to translate data source query results into a bundle of STIX objects. Query results must be in JSON format; otherwise, the data source cannot be supported.
+The `to_stix_map.json` file is where you define HOW to translate data source query results into a bundle of STIX objects. Query results must be in JSON format; otherwise, the data source cannot be supported. There are keywords which need to be specified in the to-stix mappings in order to perform specific operations on the datasource fields. To understand the keywords and their usage, see [To STIX mapping Keywords](develop-mapping-keywords.md)
 
 Results from unmapped data source fields are ignored during translation and are not included in the bundle.
 
@@ -401,6 +404,24 @@ Every STIX observed-data object must include the following properties:
 | number_observed | The number of the same events that get returned in the results. Can be defined in the to-STIX mapping if an event count is returned in the results, otherwise this should have a default of 1. |
 
 The code for translating data source results to STIX is found in `stix_shifter_utils/stix_translation/src/json_to_stix/json_to_stix_translator.py`. Normally, there is no need to edit this file.
+
+**Using multiple to-STIX map files with dialects**
+
+Query results translation can use dialects to differentiate between multiple to-STIX mapping files. Multiple to-STIX mappings may be needed in cases where datasource returns multiple tables that use different schemas. Any dialects are appended to the module name with the following format: `<module_name>:<dialect_1>:<dialect_2>` Using AWS Athena as an example, datasource can return multiple schemas such as OCSF, VPC Flow and Guardduty. This requires a to-STIX mapping file for each. When the datasource returns query results for a specific schema then the appropriate to-STIX mapping file can be used based on the dialect specified in the query. Dialects can be specified in the CLI as `aws-athena:ocsf` or in the connection object as-
+```
+  {
+    "connection": {
+      options: {
+        dialects: ['ocsf']    
+      }
+    } 
+  }
+```
+
+Each dialect gets extracted from the CLI module name or the connection object and is used throughout the pattern translation and results translation flow. In cases where multiple to-STIX map files are used, the naming convention is `<dialect>_to_stix_map.json`. It is important that the file names follow this structure since the dialect is used to dynamically look up the file path. So in the case of AWS Athena, there would be a `ocsf_to_stix_map.json`, `vpcflow_to_stix_map.json` and `guardduty_to_stix_map.json` file in the json folder. 
+
+If your data source uses multiple dialects, rename the `<DIALECT>_to_stix_map.json` files to include the dialect at the beginning of the file name. Include as many mapping files as needed; one for each dialect. If your data source only uses one dialect, include only one to-STIX mapping file with the name `to_stix_map.json` in the json directory. Alternatively, you can also create one large `to_stix_map.json` that combines all the datasource fields from different schemas instead of multiple to-STIX mapping files.
+
 
 [Back to top](#stix-translation)
 
